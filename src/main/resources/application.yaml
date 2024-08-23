@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: spring-ai-rag
+  ai:
+    openai:
+      api-key: ${OPENAI_API_KEY}
+sfg:
+  aiapp:
+    vectorStorePath: 'C:\temp\vectorstore.json'
+logging:
+  level:
+    org:
+      springframework:
+        web: trace
