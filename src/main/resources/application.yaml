@@ -3,6 +3,7 @@ spring:
     name: spring-ai-rag
   ai:
     openai:
+      # a run configban van
       api-key: ${OPENAI_API_KEY}
 sfg:
   aiapp:

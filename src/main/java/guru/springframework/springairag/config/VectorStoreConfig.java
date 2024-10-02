@@ -2,8 +2,9 @@ package guru.springframework.springairag.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.document.Document;
-import org.springframework.ai.embedding.EmbeddingClient;
+import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.reader.tika.TikaDocumentReader;
+import org.springframework.ai.transformer.splitter.TextSplitter;
 import org.springframework.ai.transformer.splitter.TokenTextSplitter;
 import org.springframework.ai.vectorstore.SimpleVectorStore;
 import org.springframework.context.annotation.Bean;
@@ -17,11 +18,9 @@ import java.util.List;
 public class VectorStoreConfig {
 
     @Bean
-    SimpleVectorStore simpleVectorStore(EmbeddingClient embeddingClient, VectorStoreProperties vectorStoreProperties) {
-        var store = new SimpleVectorStore(embeddingClient);
+    SimpleVectorStore simpleVectorStore(EmbeddingModel embeddingModel, VectorStoreProperties vectorStoreProperties) {
+        var store = new SimpleVectorStore(embeddingModel);
         File vectorStoreFile = new File(vectorStoreProperties.getVectorStorePath());
-        // TODO: add data
-
         if(vectorStoreFile.exists()) {
             store.load(vectorStoreFile);
         } else {
@@ -30,9 +29,13 @@ public class VectorStoreConfig {
                 log.debug("Loading document: " + document.getFilename());
                 TikaDocumentReader documentReader = new TikaDocumentReader(document);
                 List<Document> documents = documentReader.get();
-                TokenTextSplitter textSplitter = new TokenTextSplitter();
+                TextSplitter textSplitter = new TokenTextSplitter();
                 List<Document> splitDocs = textSplitter.apply(documents);
-                store.add(splitDocs);
+                try {
+                    store.add(splitDocs);
+                } catch (Exception e) {
+                    log.error("Error adding documents to the store: {}", e.getMessage());
+                }
             });
             store.save(vectorStoreFile);
         }
