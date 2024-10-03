@@ -1,0 +1,7 @@
+### Ask question
+
+POST http://localhost:8080/ask
+Content-Type: application/json
+
+{ "question" : "What is the movie Titanic about?" }
+
