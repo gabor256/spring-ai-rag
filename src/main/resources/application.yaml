@@ -5,6 +5,9 @@ spring:
     openai:
       # a run configban van
       api-key: ${OPENAI_API_KEY}
+      embedding:
+        options:
+          model: text-embedding-3-small
 sfg:
   aiapp:
     vectorStorePath: 'C:\temp\vectorstore.json'
